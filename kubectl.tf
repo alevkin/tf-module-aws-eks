@@ -322,7 +322,7 @@ kubectl apply -f ${aws_s3_bucket_object.storage_class.key} --kubeconfig ${path.c
 sleep 5; \
 helm install --namespace monitoring --name prometheus-operator manifests/monitoring/prometheus-operator-helm/ --values ${aws_s3_bucket_object.prometheus_operator_config.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5; \
-helm install --namespace kube-system --name termination-handler-exporter manifests/spot-termination-exporter/ --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename.key}; \
+helm install --namespace kube-system --name termination-handler-exporter manifests/spot-termination-exporter/ --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5;
 kubectl apply -f ${aws_s3_bucket_object.grafana_pvc.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5; \
