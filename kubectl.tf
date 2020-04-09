@@ -89,7 +89,7 @@ resource "null_resource" "deploy_ingress_controller" {
     command = <<EOS
 kubectl apply -f manifests/nginx-ingress/1-namespace.yaml --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5; \
-kubectl apply -f manifests/nginx-ingress/2-nginx-ingress-rbac-deployment.yaml -f ${aws_s3_bucket_object.ingress_controller_service.key} -f manifests/nginx-ingress/4-default-http-backend.yaml --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
+kubectl apply -f manifests/nginx-ingress/2-nginx-ingress-rbac-deployment.yaml -f https://${var.s3_bucket_name}.s3.amazonaws.com/${aws_s3_bucket_object.ingress_controller_service.key} -f manifests/nginx-ingress/4-default-http-backend.yaml --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5;
 EOS
 
@@ -123,7 +123,7 @@ resource "null_resource" "deploy_external_dns" {
     working_dir = "${path.module}"
 
     command = <<EOS
-kubectl apply -f ${aws_s3_bucket_object.external_dns_manifest.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
+kubectl apply -f https://${var.s3_bucket_name}.s3.amazonaws.com/${aws_s3_bucket_object.external_dns_manifest.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5;
 EOS
 
@@ -171,9 +171,9 @@ resource "null_resource" "deploy_cluster_autoscaler" {
     working_dir = "${path.module}"
 
     command = <<EOS
-kubectl apply -f ${aws_s3_bucket_object.cluster_autoscaler_priority_configmap.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
+kubectl apply -f https://${var.s3_bucket_name}.s3.amazonaws.com/${aws_s3_bucket_object.cluster_autoscaler_priority_configmap.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5; \
-kubectl apply -f ${aws_s3_bucket_object.cluster_autoscaler_config.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
+kubectl apply -f https://${var.s3_bucket_name}.s3.amazonaws.com/${aws_s3_bucket_object.cluster_autoscaler_config.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5;
 EOS
 
@@ -238,7 +238,7 @@ resource "null_resource" "deploy_fluentd" {
     working_dir = "${path.module}"
 
     command = <<EOS
-helm install --namespace logs --name fluentd ${path.module}/manifests/logs_fluend_cloudwatch/ --values ${aws_s3_bucket_object.fluentd_config.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
+helm install --namespace logs --name fluentd ${path.module}/manifests/logs_fluend_cloudwatch/ --values https://${var.s3_bucket_name}.s3.amazonaws.com/${aws_s3_bucket_object.fluentd_config.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 15;
 EOS
 
@@ -318,15 +318,15 @@ resource "null_resource" "deploy_monitoring" {
     working_dir = "${path.module}"
 
     command = <<EOS
-kubectl apply -f ${aws_s3_bucket_object.storage_class.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
+kubectl apply -f https://${var.s3_bucket_name}.s3.amazonaws.com/${aws_s3_bucket_object.storage_class.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5; \
-helm install --namespace monitoring --name prometheus-operator manifests/monitoring/prometheus-operator-helm/ --values ${aws_s3_bucket_object.prometheus_operator_config.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
+helm install --namespace monitoring --name prometheus-operator manifests/monitoring/prometheus-operator-helm/ --values https://${var.s3_bucket_name}.s3.amazonaws.com/${aws_s3_bucket_object.prometheus_operator_config.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5; \
 helm install --namespace kube-system --name termination-handler-exporter manifests/spot-termination-exporter/ --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5;
-kubectl apply -f ${aws_s3_bucket_object.grafana_pvc.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
+kubectl apply -f https://${var.s3_bucket_name}.s3.amazonaws.com/${aws_s3_bucket_object.grafana_pvc.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5; \
-helm install --namespace monitoring --name grafana manifests/monitoring/grafana-helm/ --values ${aws_s3_bucket_object.grafana_config.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
+helm install --namespace monitoring --name grafana manifests/monitoring/grafana-helm/ --values https://${var.s3_bucket_name}.s3.amazonaws.com/${aws_s3_bucket_object.grafana_config.key} --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
 sleep 5;
 EOS
 
