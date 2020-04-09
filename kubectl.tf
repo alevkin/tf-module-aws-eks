@@ -76,6 +76,7 @@ resource "aws_s3_bucket_object" "ingress_controller_service" {
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/manifests/3-nginx-ingress-service.yaml"
   content  = "${data.template_file.ingress_controller_service.rendered}"
+  acl = "aws-exec-read"
 }
 
 resource "null_resource" "deploy_ingress_controller" {
@@ -113,6 +114,7 @@ resource "aws_s3_bucket_object" "external_dns_manifest" {
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/manifests/external_dns.yaml"
   content  = "${data.template_file.external_dns_manifest.rendered}"
+  acl = "aws-exec-read"
 }
 
 resource "null_resource" "deploy_external_dns" {
@@ -146,6 +148,7 @@ resource "aws_s3_bucket_object" "cluster_autoscaler_config" {
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/manifests/cluster-autoscaler/kubernetes-autoscaler.yaml"
   content  = "${data.template_file.cluster_autoscaler_config.rendered}"
+  acl = "aws-exec-read"
 }
 
 data "template_file" "cluster_autoscaler_priority_configmap" {
@@ -162,6 +165,7 @@ resource "aws_s3_bucket_object" "cluster_autoscaler_priority_configmap" {
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/manifests/cluster-autoscaler/autoscaler-priority.yaml"
   content  = "${data.template_file.cluster_autoscaler_priority_configmap.rendered}"
+  acl = "aws-exec-read"
 }
 
 resource "null_resource" "deploy_cluster_autoscaler" {
@@ -228,6 +232,7 @@ resource "aws_s3_bucket_object" "fluentd_config" {
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/manifests/logs_fluend_cloudwatch/values.yaml"
   content  = "${data.template_file.fluentd_config.rendered}"
+  acl = "aws-exec-read"
 }
 
 resource "null_resource" "deploy_fluentd" {
@@ -287,6 +292,7 @@ resource "aws_s3_bucket_object" "storage_class" {
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/manifests/monitoring/storageClass.yaml"
   content  = "${data.template_file.storage_class.rendered}"
+  acl = "aws-exec-read"
 }
 
 resource "aws_s3_bucket_object" "grafana_pvc" {
@@ -294,6 +300,7 @@ resource "aws_s3_bucket_object" "grafana_pvc" {
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/manifests/monitoring/grafana_pvc.yaml"
   content  = "${data.template_file.grafana_pvc.rendered}"
+  acl = "aws-exec-read"
 }
 
 resource "aws_s3_bucket_object" "prometheus_operator_config" {
@@ -301,6 +308,7 @@ resource "aws_s3_bucket_object" "prometheus_operator_config" {
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/manifests/monitoring/prometheus-operator-helm/values.yaml"
   content  = "${data.template_file.prometheus_operator_values.rendered}"
+  acl = "aws-exec-read"
 }
 
 resource "aws_s3_bucket_object" "grafana_config" {
@@ -308,6 +316,7 @@ resource "aws_s3_bucket_object" "grafana_config" {
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/manifests/monitoring/grafana-helm/values.yaml"
   content  = "${data.template_file.grafana_values.rendered}"
+  acl = "aws-exec-read"
 }
 
 resource "null_resource" "deploy_monitoring" {
