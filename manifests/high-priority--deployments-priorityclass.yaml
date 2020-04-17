@@ -3,5 +3,6 @@ kind: PriorityClass
 metadata:
   name: high-priority-deployments
 value: 1000000000
+##!!! 
 globalDefault: false
 description: "This priority class should be used for high priority pods only(autoscaler, runner manager pods, etc.)."
