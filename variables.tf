@@ -14,6 +14,7 @@ variable "s3_bucket_name" {
 }
 
 variable "root_domain" {
+  type = "list"
   default = []
   description = "Root domain in which custom DNS record for ALB would be created"
 }
