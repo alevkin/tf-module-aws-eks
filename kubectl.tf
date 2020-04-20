@@ -31,6 +31,7 @@ EOS
 }
 
 resource "aws_s3_bucket_object" "kubeconfig" {
+  depends_on = ["null_resource.check_api"]
   provider = "aws.tfstate"
   bucket = "${var.s3_bucket_name}"
   key    = "${var.project}/${var.environment}/kubeconfig"
