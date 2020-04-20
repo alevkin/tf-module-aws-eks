@@ -29,3 +29,10 @@ EOS
     interpreter = ["${var.local_exec_interpreter}"]
   }
 }
+
+resource "aws_s3_bucket_object" "kubeconfig" {
+  provider = "aws.tfstate"
+  bucket = "${var.s3_bucket_name}"
+  key    = "${var.project}/${var.environment}/kubeconfig"
+  source = "./kubeconfig_${var.project}-${var.environment}"
+}
