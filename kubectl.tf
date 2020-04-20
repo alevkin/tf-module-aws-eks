@@ -1,13 +1,3 @@
-provider "kubernetes" {
-  config_path = "${path.cwd}/${module.eks.kubeconfig_filename}"
-}
-
-provider "helm" {
-  kubernetes {
-    config_path = "${path.cwd}/${module.eks.kubeconfig_filename}"
-  }
-}
-
 resource "null_resource" "eks_cluster" {
   triggers = {
     cluster_id = "${module.eks.cluster_id}"
