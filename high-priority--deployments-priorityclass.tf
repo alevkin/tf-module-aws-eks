@@ -1,5 +1,5 @@
 resource "kubernetes_priority_class" "high_priority_deployments" {
-  depends_on = ["null_resource.check_api"]
+  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
   metadata {
     name = "high-priority-deployments"
   }
