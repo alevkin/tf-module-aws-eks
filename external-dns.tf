@@ -1,5 +1,5 @@
 resource "kubernetes_service_account" "external_dns" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name      = "external-dns"
     namespace = "kube-system"
@@ -7,7 +7,7 @@ resource "kubernetes_service_account" "external_dns" {
 }
 
 resource "kubernetes_cluster_role" "external_dns" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name = "external-dns"
   }
@@ -38,7 +38,7 @@ resource "kubernetes_cluster_role" "external_dns" {
 }
 
 resource "kubernetes_cluster_role_binding" "external_dns_viewer" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name = "external-dns-viewer"
   }
@@ -57,7 +57,7 @@ resource "kubernetes_cluster_role_binding" "external_dns_viewer" {
 }
 
 resource "kubernetes_deployment" "external_dns" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name      = "external-dns"
     namespace = "kube-system"

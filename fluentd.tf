@@ -1,5 +1,5 @@
 resource "kubernetes_namespace" "logs" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     annotations = {
       name = "logs"

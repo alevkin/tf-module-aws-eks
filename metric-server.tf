@@ -1,5 +1,5 @@
 resource "kubernetes_cluster_role" "system-aggregated_metrics_reader" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name = "system:aggregated-metrics-reader"
 
@@ -26,7 +26,7 @@ resource "kubernetes_cluster_role" "system-aggregated_metrics_reader" {
 }
 
 resource "kubernetes_cluster_role_binding" "metrics_server-system-auth_delegator" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name = "metrics-server:system:auth-delegator"
   }
@@ -45,7 +45,7 @@ resource "kubernetes_cluster_role_binding" "metrics_server-system-auth_delegator
 }
 
 resource "kubernetes_role_binding" "metrics_server_auth_reader" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name      = "metrics-server-auth-reader"
     namespace = "kube-system"
@@ -65,7 +65,7 @@ resource "kubernetes_role_binding" "metrics_server_auth_reader" {
 }
 
 resource "kubernetes_api_service" "v1beta_1_metrics_k8sio" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name = "v1beta1.metrics.k8s.io"
   }
@@ -86,7 +86,7 @@ resource "kubernetes_api_service" "v1beta_1_metrics_k8sio" {
 }
 
 resource "kubernetes_service_account" "metrics_server" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name      = "metrics-server"
     namespace = "kube-system"
@@ -94,7 +94,7 @@ resource "kubernetes_service_account" "metrics_server" {
 }
 
 resource "kubernetes_deployment" "metrics_server" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local", "kubernetes_role_binding.metrics_server_auth_reader", "kubernetes_cluster_role_binding.metrics_server-system-auth_delegator", "kubernetes_cluster_role_binding.system-metrics_server"]
+  depends_on = ["null_resource.check_api", "kubernetes_role_binding.metrics_server_auth_reader", "kubernetes_cluster_role_binding.metrics_server-system-auth_delegator", "kubernetes_cluster_role_binding.system-metrics_server"]
   metadata {
     name      = "metrics-server"
     namespace = "kube-system"
@@ -147,7 +147,7 @@ resource "kubernetes_deployment" "metrics_server" {
 }
 
 resource "kubernetes_service" "metrics_server" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name      = "metrics-server"
     namespace = "kube-system"
@@ -173,7 +173,7 @@ resource "kubernetes_service" "metrics_server" {
 }
 
 resource "kubernetes_cluster_role" "system-metrics_server" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name = "system:metrics-server"
   }
@@ -186,7 +186,7 @@ resource "kubernetes_cluster_role" "system-metrics_server" {
 }
 
 resource "kubernetes_cluster_role_binding" "system-metrics_server" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local"]
+  depends_on = ["null_resource.check_api"]
   metadata {
     name = "system:metrics-server"
   }

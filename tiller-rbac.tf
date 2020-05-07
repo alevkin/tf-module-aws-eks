@@ -1,5 +1,5 @@
 resource "kubernetes_service_account" "tiller" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local", "aws_autoscaling_group.spot-asg"]
+  depends_on = ["null_resource.check_api", "aws_autoscaling_group.spot-asg"]
   metadata {
     name      = "tiller"
     namespace = "kube-system"
@@ -7,7 +7,7 @@ resource "kubernetes_service_account" "tiller" {
 }
 
 resource "kubernetes_cluster_role_binding" "tiller" {
-depends_on = ["null_resource.check_api", "local_file.kubeconfig_local", "aws_autoscaling_group.spot-asg"]
+depends_on = ["null_resource.check_api", "aws_autoscaling_group.spot-asg"]
   metadata {
     name = "tiller"
   }
@@ -26,7 +26,7 @@ depends_on = ["null_resource.check_api", "local_file.kubeconfig_local", "aws_aut
 }
 
 resource "null_resource" "init_tiller" {
-  depends_on = ["null_resource.check_api", "local_file.kubeconfig_local", "aws_autoscaling_group.spot-asg", "kubernetes_service_account.tiller", "kubernetes_cluster_role_binding.tiller"]
+  depends_on = ["null_resource.check_api", "aws_autoscaling_group.spot-asg", "kubernetes_service_account.tiller", "kubernetes_cluster_role_binding.tiller"]
 
   provisioner "local-exec" {
     working_dir = "${path.module}"
