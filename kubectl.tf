@@ -37,3 +37,14 @@ resource "aws_s3_bucket_object" "kubeconfig" {
   key    = "${var.project}/${var.environment}/kubeconfig"
   source = "./kubeconfig_${var.project}-${var.environment}"
 }
+
+#data "aws_s3_bucket_object" "kubeconfig_local" {
+#  depends_on = ["aws_s3_bucket_object.kubeconfig"]
+#  bucket = "${var.s3_bucket_name}"
+#  key = "${var.project}/${var.environment}/kubeconfig"
+#}
+
+#resource "local_file" "kubeconfig_local" {
+#    content     = "${aws_s3_bucket_object.kubeconfig.body}"
+#    filename = "${path.cwd}/kubeconfig_local"
+#}
