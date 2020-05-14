@@ -56,6 +56,7 @@ variable "alb_ingress_rules" {
 variable "cidr_whitelist" {
   description = "List of maps that contains IP CIDR with protocol type. Example provided in module examples"
   default     = []
+  type = list(object({ type = string, value = string }))
 }
 
 variable "enable_waf" {
@@ -105,7 +106,7 @@ variable "map_accounts" {
 
 variable "map_roles" {
   description = "Additional IAM roles to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
-  type        = list(string)
+  type        = any
   default     = []
 }
 
@@ -117,7 +118,11 @@ variable "map_roles" {
 
 variable "map_users" {
   description = "Additional IAM users to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
-  type        = list(string)
+  type        = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
   default     = []
 }
 

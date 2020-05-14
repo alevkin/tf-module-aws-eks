@@ -48,7 +48,7 @@ sleep 5;
 EOS
 
 
-    interpreter = var.local_exec_interpreter
+#    interpreter = var.local_exec_interpreter
   }
 }
 
