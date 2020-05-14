@@ -1,5 +1,5 @@
 resource "kubernetes_persistent_volume_claim" "grafana" {
-  depends_on = ["helm_release.termination-handler-exporter"]
+  depends_on = [helm_release.termination-handler-exporter]
   metadata {
     name      = "grafana"
     namespace = "monitoring"
@@ -11,8 +11,7 @@ resource "kubernetes_persistent_volume_claim" "grafana" {
     annotations = {
       "volume.beta.kubernetes.io/storage-provisioner" = "kubernetes.io/aws-ebs"
     }
-
-##!!!    finalizers = ["kubernetes.io/pvc-protection"]
+    ##!!!    finalizers = ["kubernetes.io/pvc-protection"]
   }
   wait_until_bound = false
   spec {

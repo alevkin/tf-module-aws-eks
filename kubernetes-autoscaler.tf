@@ -1,5 +1,5 @@
 resource "kubernetes_config_map" "cluster_autoscaler_priority_expander" {
-  depends_on = ["kubernetes_priority_class.high_priority_deployments"]
+  depends_on = [kubernetes_priority_class.high_priority_deployments]
   metadata {
     name      = "cluster-autoscaler-priority-expander"
     namespace = "kube-system"
@@ -11,28 +11,32 @@ resource "kubernetes_config_map" "cluster_autoscaler_priority_expander" {
 }
 
 resource "kubernetes_service_account" "cluster_autoscaler" {
-  depends_on = ["kubernetes_priority_class.high_priority_deployments", "kubernetes_config_map.cluster_autoscaler_priority_expander"]
+  depends_on = [
+    kubernetes_priority_class.high_priority_deployments,
+    kubernetes_config_map.cluster_autoscaler_priority_expander,
+  ]
   metadata {
     name      = "cluster-autoscaler"
     namespace = "kube-system"
 
     labels = {
       k8s-addon = "cluster-autoscaler.addons.k8s.io"
-
-      k8s-app = "cluster-autoscaler"
+      k8s-app   = "cluster-autoscaler"
     }
   }
 }
 
 resource "kubernetes_cluster_role" "cluster_autoscaler" {
-  depends_on = ["kubernetes_priority_class.high_priority_deployments", "kubernetes_config_map.cluster_autoscaler_priority_expander"]
+  depends_on = [
+    kubernetes_priority_class.high_priority_deployments,
+    kubernetes_config_map.cluster_autoscaler_priority_expander,
+  ]
   metadata {
     name = "cluster-autoscaler"
 
     labels = {
       k8s-addon = "cluster-autoscaler.addons.k8s.io"
-
-      k8s-app = "cluster-autoscaler"
+      k8s-app   = "cluster-autoscaler"
     }
   }
 
@@ -111,15 +115,17 @@ resource "kubernetes_cluster_role" "cluster_autoscaler" {
 }
 
 resource "kubernetes_role" "cluster_autoscaler" {
-  depends_on = ["kubernetes_priority_class.high_priority_deployments", "kubernetes_config_map.cluster_autoscaler_priority_expander"]
+  depends_on = [
+    kubernetes_priority_class.high_priority_deployments,
+    kubernetes_config_map.cluster_autoscaler_priority_expander,
+  ]
   metadata {
     name      = "cluster-autoscaler"
     namespace = "kube-system"
 
     labels = {
       k8s-addon = "cluster-autoscaler.addons.k8s.io"
-
-      k8s-app = "cluster-autoscaler"
+      k8s-app   = "cluster-autoscaler"
     }
   }
 
@@ -138,14 +144,16 @@ resource "kubernetes_role" "cluster_autoscaler" {
 }
 
 resource "kubernetes_cluster_role_binding" "cluster_autoscaler" {
-  depends_on = ["kubernetes_priority_class.high_priority_deployments", "kubernetes_config_map.cluster_autoscaler_priority_expander"]
+  depends_on = [
+    kubernetes_priority_class.high_priority_deployments,
+    kubernetes_config_map.cluster_autoscaler_priority_expander,
+  ]
   metadata {
     name = "cluster-autoscaler"
 
     labels = {
       k8s-addon = "cluster-autoscaler.addons.k8s.io"
-
-      k8s-app = "cluster-autoscaler"
+      k8s-app   = "cluster-autoscaler"
     }
   }
 
@@ -163,15 +171,17 @@ resource "kubernetes_cluster_role_binding" "cluster_autoscaler" {
 }
 
 resource "kubernetes_role_binding" "cluster_autoscaler" {
-  depends_on = ["kubernetes_priority_class.high_priority_deployments", "kubernetes_config_map.cluster_autoscaler_priority_expander"]
+  depends_on = [
+    kubernetes_priority_class.high_priority_deployments,
+    kubernetes_config_map.cluster_autoscaler_priority_expander,
+  ]
   metadata {
     name      = "cluster-autoscaler"
     namespace = "kube-system"
 
     labels = {
       k8s-addon = "cluster-autoscaler.addons.k8s.io"
-
-      k8s-app = "cluster-autoscaler"
+      k8s-app   = "cluster-autoscaler"
     }
   }
 
@@ -189,7 +199,12 @@ resource "kubernetes_role_binding" "cluster_autoscaler" {
 }
 
 resource "kubernetes_deployment" "cluster_autoscaler" {
-  depends_on = ["kubernetes_priority_class.high_priority_deployments", "kubernetes_config_map.cluster_autoscaler_priority_expander", "kubernetes_role_binding.cluster_autoscaler", "kubernetes_cluster_role_binding.cluster_autoscaler"]
+  depends_on = [
+    kubernetes_priority_class.high_priority_deployments,
+    kubernetes_config_map.cluster_autoscaler_priority_expander,
+    kubernetes_role_binding.cluster_autoscaler,
+    kubernetes_cluster_role_binding.cluster_autoscaler,
+  ]
   metadata {
     name      = "cluster-autoscaler"
     namespace = "kube-system"

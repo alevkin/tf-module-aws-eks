@@ -1,8 +1,8 @@
 resource "null_resource" "install_prom_crd" {
-  depends_on = ["kubernetes_storage_class.gp_2"]
+  depends_on = [kubernetes_storage_class.gp_2]
 
   provisioner "local-exec" {
-    working_dir = "${path.module}"
+    working_dir = path.module
 
     command = <<EOS
 kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/v0.30.1/example/prometheus-operator-crd/alertmanager.crd.yaml --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
@@ -15,11 +15,13 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/v0
 sleep 5;
 EOS
 
-    interpreter = ["${var.local_exec_interpreter}"]
+
+    interpreter = var.local_exec_interpreter
   }
 }
+
 resource "kubernetes_namespace" "monitoring" {
-  depends_on = ["kubernetes_storage_class.gp_2"]
+  depends_on = [kubernetes_storage_class.gp_2]
   metadata {
     annotations = {
       name = "monitoring"
@@ -29,22 +31,28 @@ resource "kubernetes_namespace" "monitoring" {
 }
 
 resource "helm_release" "prometheus-operator" {
-  depends_on = ["null_resource.install_prom_crd", "kubernetes_namespace.monitoring"]
-  name       = "prometheus-operator"
+  depends_on = [
+    null_resource.install_prom_crd,
+    kubernetes_namespace.monitoring,
+  ]
+  name      = "prometheus-operator"
   namespace = "monitoring"
-  chart = "${path.module}/manifests/monitoring/prometheus-operator-helm/"
+  chart     = "${path.module}/manifests/monitoring/prometheus-operator-helm/"
 
   values = [
-    "${file("${path.module}/manifests_templates/monitoring/prometheus-operator-values.yaml")}"
+    file(
+      "${path.module}/manifests_templates/monitoring/prometheus-operator-values.yaml",
+    ),
   ]
 
   set {
     name  = "alertmanager.ingress.annotations.external-dns\\.alpha\\.kubernetes\\.io/target"
-    value = "${aws_route53_record.alb-route53-record.name}"
+    value = aws_route53_record.alb-route53-record.name
   }
   set {
-    name  = "alertmanager.ingress.hosts"
-#    value = "alertmanager.${var.root_domain}"
+    name = "alertmanager.ingress.hosts"
+
+    #    value = "alertmanager.${var.root_domain}"
     value = "{${join(",", var.root_domain)}}"
   }
   set {
@@ -53,24 +61,25 @@ resource "helm_release" "prometheus-operator" {
   }
   set {
     name  = "alertmanager.alertmanagerSpec.nodeSelector.failure-domain\\.beta\\.kubernetes\\.io/zone"
-    value = "${local.pvc_az}"
+    value = local.pvc_az
   }
   set {
     name  = "prometheusOperator.nodeSelector.failure-domain\\.beta\\.kubernetes\\.io/zone"
-    value = "${local.pvc_az}"
+    value = local.pvc_az
   }
   set {
     name  = "prometheus.ingress.annotations.external-dns\\.alpha\\.kubernetes\\.io/target"
-    value = "${aws_route53_record.alb-route53-record.name}"
+    value = aws_route53_record.alb-route53-record.name
   }
   set {
-    name  = "prometheus.ingress.hosts"
-#    value = "prometheus.${var.root_domain}"
+    name = "prometheus.ingress.hosts"
+
+    #    value = "prometheus.${var.root_domain}"
     value = "{${join(",", var.root_domain)}}"
   }
   set {
     name  = "prometheus.prometheusSpec.nodeSelector.failure-domain\\.beta\\.kubernetes\\.io/zone"
-    value = "${local.pvc_az}"
+    value = local.pvc_az
   }
   set {
     name  = "prometheus.prometheusSpec.storage.volumeClaimTemplate.spec.storageClassName"

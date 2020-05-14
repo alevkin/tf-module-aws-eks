@@ -1,22 +1,22 @@
 resource "null_resource" "eks_cluster" {
   triggers = {
-    cluster_id = "${module.eks.cluster_id}"
+    cluster_id = module.eks.cluster_id
   }
 }
 
 data "aws_subnet" "pvc_subnet" {
-  id = "${var.private_subnets[0]}"
+  id = var.private_subnets[0]
 }
 
 locals {
-  pvc_az = "${var.monitoring_availability_zone == "" ? data.aws_subnet.pvc_subnet.availability_zone : var.monitoring_availability_zone}"
+  pvc_az = var.monitoring_availability_zone == "" ? data.aws_subnet.pvc_subnet.availability_zone : var.monitoring_availability_zone
 }
 
 resource "null_resource" "check_api" {
-  depends_on = ["null_resource.eks_cluster"]
+  depends_on = [null_resource.eks_cluster]
 
   provisioner "local-exec" {
-    working_dir = "${path.module}"
+    working_dir = path.module
 
     command = <<EOS
 exit_code=1
@@ -26,16 +26,17 @@ sleep 5; \
 done;
 EOS
 
-    interpreter = ["${var.local_exec_interpreter}"]
+
+    interpreter = var.local_exec_interpreter
   }
 }
 
 resource "aws_s3_bucket_object" "kubeconfig" {
-  depends_on = ["null_resource.check_api"]
-  provider = "aws.tfstate"
-  bucket = "${var.s3_bucket_name}"
-  key    = "${var.project}/${var.environment}/kubeconfig"
-  source = "./kubeconfig_${var.project}-${var.environment}"
+  depends_on = [null_resource.check_api]
+  provider   = aws.tfstate
+  bucket     = var.s3_bucket_name
+  key        = "${var.project}/${var.environment}/kubeconfig"
+  source     = "./kubeconfig_${var.project}-${var.environment}"
 }
 
 #data "aws_s3_bucket_object" "kubeconfig_local" {
@@ -43,7 +44,6 @@ resource "aws_s3_bucket_object" "kubeconfig" {
 #  bucket = "${var.s3_bucket_name}"
 #  key = "${var.project}/${var.environment}/kubeconfig"
 #}
-
 #resource "local_file" "kubeconfig_local" {
 #    content     = "${aws_s3_bucket_object.kubeconfig.body}"
 #    filename = "${path.cwd}/kubeconfig_local"

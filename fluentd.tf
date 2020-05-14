@@ -1,5 +1,5 @@
 resource "kubernetes_namespace" "logs" {
-  depends_on = ["null_resource.check_api"]
+  depends_on = [null_resource.check_api]
   metadata {
     annotations = {
       name = "logs"
@@ -9,18 +9,21 @@ resource "kubernetes_namespace" "logs" {
 }
 
 resource "helm_release" "fluentd" {
-  depends_on = ["null_resource.init_tiller", "kubernetes_namespace.logs"]
-  name       = "fluentd"
+  depends_on = [
+    null_resource.init_tiller,
+    kubernetes_namespace.logs,
+  ]
+  name      = "fluentd"
   namespace = "logs"
-  chart = "${path.module}/manifests/logs_fluend_cloudwatch/"
+  chart     = "${path.module}/manifests/logs_fluend_cloudwatch/"
 
   values = [
-    "${file("${path.module}/manifests_templates/fluentd_values.yaml")}"
+    file("${path.module}/manifests_templates/fluentd_values.yaml"),
   ]
 
   set {
     name  = "awsRegion"
-    value = "${data.aws_region.current.name}"
+    value = data.aws_region.current.name
   }
   set {
     name  = "logGroupName"
@@ -28,6 +31,7 @@ resource "helm_release" "fluentd" {
   }
   set {
     name  = "awsRole"
-    value = "${module.eks.worker_iam_role_name}"
+    value = module.eks.worker_iam_role_name
   }
 }
+

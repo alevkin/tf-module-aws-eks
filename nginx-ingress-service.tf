@@ -1,66 +1,73 @@
 resource "kubernetes_namespace" "ingress_nginx" {
-  depends_on = ["null_resource.check_api"]
+  depends_on = [null_resource.check_api]
   metadata {
     name = "ingress-nginx"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
 }
 
 resource "kubernetes_config_map" "tcp_services" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "tcp-services"
     namespace = "ingress-nginx"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
 }
 
 resource "kubernetes_config_map" "udp_services" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "udp-services"
     namespace = "ingress-nginx"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
 }
 
 resource "kubernetes_service_account" "nginx_ingress_serviceaccount" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "nginx-ingress-serviceaccount"
     namespace = "ingress-nginx"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
 }
 
 resource "kubernetes_cluster_role" "nginx_ingress_clusterrole" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name = "nginx-ingress-clusterrole"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
@@ -103,14 +110,16 @@ resource "kubernetes_cluster_role" "nginx_ingress_clusterrole" {
 }
 
 resource "kubernetes_role" "nginx_ingress_role" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "nginx-ingress-role"
     namespace = "ingress-nginx"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
@@ -142,14 +151,16 @@ resource "kubernetes_role" "nginx_ingress_role" {
 }
 
 resource "kubernetes_role_binding" "nginx_ingress_role_nisa_binding" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "nginx-ingress-role-nisa-binding"
     namespace = "ingress-nginx"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
@@ -168,13 +179,15 @@ resource "kubernetes_role_binding" "nginx_ingress_role_nisa_binding" {
 }
 
 resource "kubernetes_cluster_role_binding" "nginx_ingress_clusterrole_nisa_binding" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name = "nginx-ingress-clusterrole-nisa-binding"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
@@ -193,14 +206,16 @@ resource "kubernetes_cluster_role_binding" "nginx_ingress_clusterrole_nisa_bindi
 }
 
 resource "kubernetes_daemonset" "nginx_ingress_controller" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "nginx-ingress-controller"
     namespace = "ingress-nginx"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
@@ -208,8 +223,7 @@ resource "kubernetes_daemonset" "nginx_ingress_controller" {
   spec {
     selector {
       match_labels = {
-        "app.kubernetes.io/name" = "ingress-nginx"
-
+        "app.kubernetes.io/name"    = "ingress-nginx"
         "app.kubernetes.io/part-of" = "ingress-nginx"
       }
     }
@@ -217,14 +231,12 @@ resource "kubernetes_daemonset" "nginx_ingress_controller" {
     template {
       metadata {
         labels = {
-          "app.kubernetes.io/name" = "ingress-nginx"
-
+          "app.kubernetes.io/name"    = "ingress-nginx"
           "app.kubernetes.io/part-of" = "ingress-nginx"
         }
 
         annotations = {
-          "prometheus.io/port" = "10254"
-
+          "prometheus.io/port"   = "10254"
           "prometheus.io/scrape" = "true"
         }
       }
@@ -309,17 +321,17 @@ resource "kubernetes_daemonset" "nginx_ingress_controller" {
   }
 }
 
-
-
 resource "kubernetes_service" "ingress_nginx" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "ingress-nginx"
     namespace = "ingress-nginx"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
@@ -329,12 +341,11 @@ resource "kubernetes_service" "ingress_nginx" {
       name        = "http"
       port        = 80
       target_port = "http"
-      node_port   = "${var.target_group_port}"
+      node_port   = var.target_group_port
     }
 
     selector = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
 
@@ -343,14 +354,16 @@ resource "kubernetes_service" "ingress_nginx" {
 }
 
 resource "kubernetes_service" "ingress_nginx_metrics" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "ingress-nginx-metrics"
     namespace = "ingress-nginx"
 
     labels = {
-      app = "ingress-nginx"
-
+      app     = "ingress-nginx"
       release = "nrw-monitoring"
     }
   }
@@ -364,8 +377,7 @@ resource "kubernetes_service" "ingress_nginx_metrics" {
     }
 
     selector = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
 
@@ -374,37 +386,39 @@ resource "kubernetes_service" "ingress_nginx_metrics" {
 }
 
 resource "kubernetes_config_map" "nginx_configuration" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "nginx-configuration"
     namespace = "ingress-nginx"
 
     labels = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-
+      "app.kubernetes.io/name"    = "ingress-nginx"
       "app.kubernetes.io/part-of" = "ingress-nginx"
     }
   }
 
   data = {
-    proxy-real-ip-cidr = "0.0.0.0/0"
-
+    proxy-real-ip-cidr    = "0.0.0.0/0"
     use-forwarded-headers = "true"
-
-    use-proxy-protocol = "false"
+    use-proxy-protocol    = "false"
   }
 }
 
 resource "kubernetes_service" "nginx_default_backend" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "nginx-default-backend"
     namespace = "ingress-nginx"
 
     labels = {
       k8s-addon = "ingress-nginx.addons.k8s.io"
-
-      k8s-app = "default-http-backend"
+      k8s-app   = "default-http-backend"
     }
   }
 
@@ -421,15 +435,17 @@ resource "kubernetes_service" "nginx_default_backend" {
 }
 
 resource "kubernetes_deployment" "nginx_default_backend" {
-  depends_on = ["null_resource.check_api", "kubernetes_namespace.ingress_nginx"]
+  depends_on = [
+    null_resource.check_api,
+    kubernetes_namespace.ingress_nginx,
+  ]
   metadata {
     name      = "nginx-default-backend"
     namespace = "ingress-nginx"
 
     labels = {
       k8s-addon = "ingress-nginx.addons.k8s.io"
-
-      k8s-app = "default-http-backend"
+      k8s-app   = "default-http-backend"
     }
   }
 
@@ -438,22 +454,18 @@ resource "kubernetes_deployment" "nginx_default_backend" {
 
     selector {
       match_labels = {
-        app = "nginx-default-backend"
-
+        app       = "nginx-default-backend"
         k8s-addon = "ingress-nginx.addons.k8s.io"
-
-        k8s-app = "default-http-backend"
+        k8s-app   = "default-http-backend"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "nginx-default-backend"
-
+          app       = "nginx-default-backend"
           k8s-addon = "ingress-nginx.addons.k8s.io"
-
-          k8s-app = "default-http-backend"
+          k8s-app   = "default-http-backend"
         }
       }
 

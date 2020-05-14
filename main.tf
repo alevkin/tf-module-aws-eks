@@ -1,4 +1,5 @@
-data "aws_region" "current" {}
+data "aws_region" "current" {
+}
 
 data "aws_ami" "eks_ami" {
   most_recent = true
@@ -22,31 +23,31 @@ data "aws_ami" "eks_ami" {
 }
 
 resource "aws_cloudwatch_log_group" "container_logs" {
-  count = "${ var.enable_container_logs ? 1 : 0 }"
+  count = var.enable_container_logs ? 1 : 0
 
   name              = "${var.project}-${var.environment}-container-logs"
-  retention_in_days = "${var.container_logs_retention_days}"
+  retention_in_days = var.container_logs_retention_days
 
   tags = {
-    project     = "${var.project}"
-    environment = "${var.environment}"
+    project     = var.project
+    environment = var.environment
   }
 }
 
 module "eks" {
-  source                    = "github.com/terraform-aws-modules/terraform-aws-eks?ref=v4.0.0"
+  source                    = "github.com/terraform-aws-modules/terraform-aws-eks?ref=v12.0.0"
   cluster_name              = "${var.project}-${var.environment}"
-  vpc_id                    = "${var.vpc_id}"
-  subnets                   = "${var.private_subnets}"
-  cluster_enabled_log_types = "${var.cluster_enabled_log_types}"
-  cluster_version           = "${var.cluster_version}"
-  local_exec_interpreter    = "${var.local_exec_interpreter}"
-  map_accounts              = "${var.map_accounts}"
-  map_accounts_count        = "${var.map_accounts_count}"
-  map_roles                 = "${var.map_roles}"
-  map_roles_count           = "${var.map_roles_count}"
-  map_users                 = "${var.map_users}"
-  map_users_count           = "${var.map_users_count}"
+  vpc_id                    = var.vpc_id
+  subnets                   = var.private_subnets
+  cluster_enabled_log_types = var.cluster_enabled_log_types
+  cluster_version           = var.cluster_version
+#  local_exec_interpreter    = var.local_exec_interpreter
+  map_accounts              = var.map_accounts
+#  map_accounts_count        = var.map_accounts_count
+  map_roles                 = var.map_roles
+#  map_roles_count           = var.map_roles_count
+  map_users                 = var.map_users
+#  map_users_count           = var.map_users_count
 
   worker_groups = [
     {
@@ -57,7 +58,8 @@ module "eks" {
   ]
 
   tags = {
-    project     = "${var.project}"
-    environment = "${var.environment}"
+    project     = var.project
+    environment = var.environment
   }
 }
+
