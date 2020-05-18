@@ -4,7 +4,7 @@ data "aws_route53_zone" "hosted_zone" {
 }
 
 module "acm-cert" {
-  source = "github.com/lean-delivery/tf-module-aws-acm?ref=1.0.0"
+  source = "github.com/makalis/tf-module-aws-acm?ref=1.0.0"
 
   module_enabled = var.create_acm_certificate
 

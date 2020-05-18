@@ -242,6 +242,7 @@ resource "kubernetes_daemonset" "nginx_ingress_controller" {
       }
 
       spec {
+        automount_service_account_token = true
         container {
           name  = "nginx-ingress-controller"
           image = "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.24.0"
