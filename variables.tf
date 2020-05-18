@@ -27,6 +27,7 @@ variable "alternative_domains_count" {
 variable "alternative_domains" {
   description = "Alternative domains for ACM certificate dns records with ',' as delimiter"
   default     = []
+  type = list(string)
 }
 
 variable "alb_route53_record" {
@@ -61,12 +62,13 @@ variable "cidr_whitelist" {
 
 variable "enable_waf" {
   description = "Set true to enable Web Application Firewall for whitelisting"
-  default     = false
+  default     = "false"
 }
 
 variable "create_acm_certificate" {
   description = "Set true for ACM certificate for ALB creation"
-  default     = true
+  default     = "true"
+  type = bool
 }
 
 variable "target_group_port" {

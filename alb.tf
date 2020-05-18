@@ -92,6 +92,9 @@ resource "aws_lb" "alb" {
 }
 
 resource "aws_route53_record" "alb-route53-record" {
+##!!!
+  depends_on = [module.acm-cert.certificate_arn]
+  allow_overwrite = true
   zone_id = data.aws_route53_zone.hosted_zone.id
   name    = var.alb_route53_record
   type    = "A"
@@ -104,7 +107,7 @@ resource "aws_route53_record" "alb-route53-record" {
 }
 
 resource "aws_lb_listener" "redirect_to_https" {
-  count             = var.create_acm_certificate
+##!!!  count             = var.create_acm_certificate
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
@@ -121,7 +124,7 @@ resource "aws_lb_listener" "redirect_to_https" {
 }
 
 resource "aws_lb_listener" "https" {
-  count             = var.create_acm_certificate
+##!!!  count             = var.create_acm_certificate
   load_balancer_arn = aws_lb.alb.arn
   port              = "443"
   protocol          = "HTTPS"

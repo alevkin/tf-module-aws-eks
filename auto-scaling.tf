@@ -95,15 +95,15 @@ resource "aws_launch_configuration" "spot-asg" {
 
 resource "aws_autoscaling_group" "spot-asg" {
   count                     = length(var.spot_configuration) * length(var.private_subnets)
-  name                      = "${var.project}-${var.environment}-spot-asg-${count.index % length(var.private_subnets)}-${var.spot_configuration[count.index / length(var.private_subnets)]["instance_type"]}"
+  name                      = "${var.project}-${var.environment}-spot-asg-${count.index % length(var.private_subnets)}-${var.spot_configuration[floor(count.index / length(var.private_subnets))]["instance_type"]}"
   health_check_grace_period = 300
   health_check_type         = "EC2"
-  max_size                  = var.spot_configuration[count.index / length(var.private_subnets)]["asg_max_size"]
-  min_size                  = var.spot_configuration[count.index / length(var.private_subnets)]["asg_min_size"]
-  desired_capacity          = var.spot_configuration[count.index / length(var.private_subnets)]["asg_desired_capacity"]
+  max_size                  = var.spot_configuration[floor(count.index / length(var.private_subnets))]["asg_max_size"]
+  min_size                  = var.spot_configuration[floor(count.index / length(var.private_subnets))]["asg_min_size"]
+  desired_capacity          = var.spot_configuration[floor(count.index / length(var.private_subnets))]["asg_desired_capacity"]
   force_delete              = true
   target_group_arns         = [aws_lb_target_group.alb.arn]
-  launch_configuration      = aws_launch_configuration.spot-asg[count.index / length(var.private_subnets)].name
+  launch_configuration      = aws_launch_configuration.spot-asg[floor(count.index / length(var.private_subnets))].name
   # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
   # force an interpolation expression to be interpreted as a list by wrapping it
   # in an extra set of list brackets. That form was supported for compatibility in
@@ -140,7 +140,7 @@ resource "aws_autoscaling_group" "spot-asg" {
 
   tag {
     key                 = "Name"
-    value               = "${var.project}-${var.environment}-spot-asg-${var.spot_configuration[count.index / length(var.private_subnets)]["instance_type"]}-${count.index % length(var.private_subnets)}"
+    value               = "${var.project}-${var.environment}-spot-asg-${var.spot_configuration[floor(count.index / length(var.private_subnets))]["instance_type"]}-${count.index % length(var.private_subnets)}"
     propagate_at_launch = true
   }
 
@@ -206,15 +206,15 @@ resource "aws_launch_configuration" "on-demand-asg" {
 
 resource "aws_autoscaling_group" "on-demand-asg" {
   count                     = length(var.on_demand_configuration) * length(var.private_subnets)
-  name                      = "${var.project}-${var.environment}-on-demand-asg-${count.index % length(var.private_subnets)}-${var.on_demand_configuration[count.index / length(var.private_subnets)]["instance_type"]}"
+  name                      = "${var.project}-${var.environment}-on-demand-asg-${count.index % length(var.private_subnets)}-${var.on_demand_configuration[floor(count.index / length(var.private_subnets))]["instance_type"]}"
   health_check_grace_period = 300
   health_check_type         = "EC2"
-  max_size                  = var.on_demand_configuration[count.index / length(var.private_subnets)]["asg_max_size"]
-  min_size                  = var.on_demand_configuration[count.index / length(var.private_subnets)]["asg_min_size"]
-  desired_capacity          = var.on_demand_configuration[count.index / length(var.private_subnets)]["asg_desired_capacity"]
+  max_size                  = var.on_demand_configuration[floor(count.index / length(var.private_subnets))]["asg_max_size"]
+  min_size                  = var.on_demand_configuration[floor(count.index / length(var.private_subnets))]["asg_min_size"]
+  desired_capacity          = var.on_demand_configuration[floor(count.index / length(var.private_subnets))]["asg_desired_capacity"]
   force_delete              = true
   target_group_arns         = [aws_lb_target_group.alb.arn]
-  launch_configuration      = aws_launch_configuration.on-demand-asg[count.index / length(var.private_subnets)].name
+  launch_configuration      = aws_launch_configuration.on-demand-asg[floor(count.index / length(var.private_subnets))].name
   # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
   # force an interpolation expression to be interpreted as a list by wrapping it
   # in an extra set of list brackets. That form was supported for compatibility in
@@ -239,7 +239,7 @@ resource "aws_autoscaling_group" "on-demand-asg" {
 
   tag {
     key                 = "Name"
-    value               = "${var.project}-${var.environment}-on-demand-asg-${var.on_demand_configuration[count.index / length(var.private_subnets)]["instance_type"]}-${count.index % length(var.private_subnets)}"
+    value               = "${var.project}-${var.environment}-on-demand-asg-${var.on_demand_configuration[floor(count.index / length(var.private_subnets))]["instance_type"]}-${count.index % length(var.private_subnets)}"
     propagate_at_launch = true
   }
 
@@ -311,15 +311,15 @@ resource "aws_launch_configuration" "service" {
 
 resource "aws_autoscaling_group" "service-on-demand-asg" {
   count                     = length(var.service_on_demand_configuration) * length(var.private_subnets)
-  name                      = "${var.project}-${var.environment}-service-on-demand-asg-${var.service_on_demand_configuration[count.index / length(var.private_subnets)]["instance_type"]}-${count.index % length(var.private_subnets)}"
+  name                      = "${var.project}-${var.environment}-service-on-demand-asg-${var.service_on_demand_configuration[floor(count.index / length(var.private_subnets))]["instance_type"]}-${count.index % length(var.private_subnets)}"
   health_check_grace_period = 300
   health_check_type         = "EC2"
-  max_size                  = var.service_on_demand_configuration[count.index / length(var.private_subnets)]["asg_max_size"]
-  min_size                  = var.service_on_demand_configuration[count.index / length(var.private_subnets)]["asg_min_size"]
-  desired_capacity          = var.service_on_demand_configuration[count.index / length(var.private_subnets)]["asg_desired_capacity"]
+  max_size                  = var.service_on_demand_configuration[floor(count.index / length(var.private_subnets))]["asg_max_size"]
+  min_size                  = var.service_on_demand_configuration[floor(count.index / length(var.private_subnets))]["asg_min_size"]
+  desired_capacity          = var.service_on_demand_configuration[floor(count.index / length(var.private_subnets))]["asg_desired_capacity"]
   force_delete              = true
   target_group_arns         = [aws_lb_target_group.alb.arn]
-  launch_configuration      = aws_launch_configuration.service[count.index / length(var.private_subnets)].name
+  launch_configuration      = aws_launch_configuration.service[floor(count.index / length(var.private_subnets))].name
   # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
   # force an interpolation expression to be interpreted as a list by wrapping it
   # in an extra set of list brackets. That form was supported for compatibility in
@@ -344,7 +344,7 @@ resource "aws_autoscaling_group" "service-on-demand-asg" {
 
   tag {
     key                 = "Name"
-    value               = "${var.project}-${var.environment}-service-on-demand-${var.service_on_demand_configuration[count.index / length(var.private_subnets)]["instance_type"]}-${count.index / length(var.private_subnets)}"
+    value               = "${var.project}-${var.environment}-service-on-demand-${var.service_on_demand_configuration[floor(count.index / length(var.private_subnets))]["instance_type"]}-${count.index / length(var.private_subnets)}"
     propagate_at_launch = true
   }
 
