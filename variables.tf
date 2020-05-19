@@ -36,8 +36,12 @@ variable "alb_route53_record" {
 
 variable "alb_ingress_rules" {
   description = "List of maps that contains ingress rules for ALB security group"
-  type        = any
-
+  type        = list(object({
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = string
+  }))
   default = [
     {
       from_port   = 80
@@ -77,12 +81,6 @@ variable "target_group_port" {
   default     = "30080"
 }
 
-#variable "local_exec_interpreter" {
-#  description = "Command to run for local-exec resources. Must be a shell-style interpreter. If you are on Windows Git Bash is a good choice."
-#  type        = list(string)
-#  default     = ["/bin/sh", "-c"]
-#}
-
 variable "cluster_version" {
   description = "Kubernetes version to use for the EKS cluster."
   default     = "1.14"
@@ -100,23 +98,12 @@ variable "map_accounts" {
   default     = []
 }
 
-#variable "map_accounts_count" {
-#  description = "The count of accounts in the map_accounts list."
-#  type        = string
-#  default     = 0
-#}
-
 variable "map_roles" {
+## Does anybody use it? 
   description = "Additional IAM roles to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
   type        = any
   default     = []
 }
-
-#variable "map_roles_count" {
-#  description = "The count of roles in the map_roles list."
-#  type        = string
-#  default     = 0
-#}
 
 variable "map_users" {
   description = "Additional IAM users to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
@@ -127,12 +114,6 @@ variable "map_users" {
   }))
   default     = []
 }
-
-#variable "map_users_count" {
-#  description = "The count of roles in the map_users list."
-#  type        = string
-#  default     = 0
-#}
 
 variable "vpc_id" {
   description = "VPC ID for cluster provisioning"
@@ -164,7 +145,14 @@ variable "worker_nodes_ssh_key" {
 
 variable "spot_configuration" {
   description = "List of maps that contains configurations for ASGs with spot workers instances what will be used in EKS-cluster"
-  type        = any
+  type        = list(object({
+    instance_type           = string
+    spot_price              = string
+    asg_max_size            = string
+    asg_min_size            = string
+    asg_desired_capacity    = string
+    additional_kubelet_args = string
+  }))
 
   default = [
     {
@@ -188,7 +176,13 @@ variable "spot_configuration" {
 
 variable "on_demand_configuration" {
   description = "List of maps that contains configurations for ASGs with on-demand workers instances what will be used in EKS-cluster"
-  type        = any
+  type        = list(object({
+    instance_type           = string
+    asg_max_size            = string
+    asg_min_size            = string
+    asg_desired_capacity    = string
+    additional_kubelet_args = string
+  }))
 
   default = [
     {
@@ -203,7 +197,13 @@ variable "on_demand_configuration" {
 
 variable "service_on_demand_configuration" {
   description = "List of maps that contains configurations for ASGs with on-demand workers instances what will be used in EKS-cluster"
-  type        = any
+  type        = list(object({
+    instance_type           = string
+    asg_max_size            = string
+    asg_min_size            = string
+    asg_desired_capacity    = string
+    additional_kubelet_args = string
+  }))
 
   default = [
     {
