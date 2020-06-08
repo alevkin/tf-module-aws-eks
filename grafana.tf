@@ -16,7 +16,7 @@ resource "helm_release" "grafana" {
   }
   set {
     name  = "ingress.hosts"
-    value = "{${join(",", var.root_domain)}}"
+    value = "{grafana.${join(",", var.root_domain)}}"
   }
   set {
     name  = "nodeSelector.failure-domain\\.beta\\.kubernetes\\.io/zone"
