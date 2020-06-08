@@ -1,25 +1,3 @@
-#resource "null_resource" "install_prom_crd" {
-#  depends_on = [kubernetes_storage_class.gp_2]
-#
-#  provisioner "local-exec" {
-#    working_dir = path.module
-
-#    command = <<EOS
-#kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/v0.30.1/example/prometheus-operator-crd/alertmanager.crd.yaml --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
-#sleep 5;
-#kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/v0.30.1/example/prometheus-operator-crd/prometheus.crd.yaml --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
-#sleep 5;
-#kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/v0.30.1/example/prometheus-operator-crd/prometheusrule.crd.yaml --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
-#sleep 5;
-#kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/v0.30.1/example/prometheus-operator-crd/servicemonitor.crd.yaml --kubeconfig ${path.cwd}/${module.eks.kubeconfig_filename}; \
-#sleep 5;
-#EOS
-
-
-#    interpreter = var.local_exec_interpreter
-#  }
-#}
-
 resource "kubernetes_namespace" "monitoring" {
   depends_on = [kubernetes_storage_class.gp_2]
   metadata {
