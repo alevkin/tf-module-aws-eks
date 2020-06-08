@@ -129,7 +129,7 @@ module "eks_test" {
   worker_nodes_ssh_key      = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmYWeU1Hm+KfNmnOhB1OVh58KVcetUp6URTPB6fEOmIoNpXXpwFNeotjPoyFwwNc6KJ3LtDOo/Gx9SBkx9sSrHZcJVrKXRF/h4fe4nWeuoz0l3e8Toq+UajIXPjtv+mXkUX5LeyWKwInGc9U3BHXhzV8BYz9i1UqPDDvNsmep5gdRukI327Rh1G+kAYuhivvxbrzsIQrLUMjHqTiL25yILHZJ/eCJvcqLBXtxkPJThytVC1WUZ4vKQ5g8Ley6CtEa/7HolH6RlGduHswzqcdjrSMNxXPoSLF0j4cOeRy7MQA3TU4cLBgcmrwGgE5/IjBy3/3e15D3jtu8jX0r+tUR3 user@example.com"
   enable_waf                = true
   create_acm_certificate    = true
-  root_domain               = "eks.example.com"
+  root_domain               = ["eks.example.com"]
   alb_route53_record        = "eks-test.eks.example.com"
   alternative_domains       = ["*.eks.example.com"]
   alternative_domains_count = 1

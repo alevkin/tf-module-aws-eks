@@ -753,6 +753,7 @@ prometheus-node-exporter:
 ##
 prometheusOperator:
   enabled: true
+  createCustomResource: false
 
   ## Service account for Alertmanager to use.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/

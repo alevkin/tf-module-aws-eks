@@ -1,19 +1,21 @@
 variable "project" {
   description = "Project name is used to identify resources"
-  type        = "string"
+  type        = string
 }
 
 variable "environment" {
   description = "Environment name is used to identify resources"
-  type        = "string"
+  type        = string
 }
 
 variable "s3_bucket_name" {
   description = "Name of the bucket to store kubernetes manifests"
-  type = "string"
+  type        = string
 }
 
 variable "root_domain" {
+  type        = list(string)
+  default     = []
   description = "Root domain in which custom DNS record for ALB would be created"
 }
 
@@ -25,6 +27,7 @@ variable "alternative_domains_count" {
 variable "alternative_domains" {
   description = "Alternative domains for ACM certificate dns records with ',' as delimiter"
   default     = []
+  type = list(string)
 }
 
 variable "alb_route53_record" {
@@ -33,8 +36,12 @@ variable "alb_route53_record" {
 
 variable "alb_ingress_rules" {
   description = "List of maps that contains ingress rules for ALB security group"
-  type        = "list"
-
+  type        = list(object({
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = string
+  }))
   default = [
     {
       from_port   = 80
@@ -54,28 +61,24 @@ variable "alb_ingress_rules" {
 variable "cidr_whitelist" {
   description = "List of maps that contains IP CIDR with protocol type. Example provided in module examples"
   default     = []
+  type = list(object({ type = string, value = string }))
 }
 
 variable "enable_waf" {
   description = "Set true to enable Web Application Firewall for whitelisting"
-  default     = false
+  default     = "false"
 }
 
 variable "create_acm_certificate" {
   description = "Set true for ACM certificate for ALB creation"
-  default     = true
+  default     = "true"
+  type = bool
 }
 
 variable "target_group_port" {
   description = "ALB targer group port. This value will be used as NodePort for Nginx Ingress controller service."
-  type        = "string"
+  type        = string
   default     = "30080"
-}
-
-variable "local_exec_interpreter" {
-  description = "Command to run for local-exec resources. Must be a shell-style interpreter. If you are on Windows Git Bash is a good choice."
-  type        = "list"
-  default     = ["/bin/sh", "-c"]
 }
 
 variable "cluster_version" {
@@ -86,76 +89,70 @@ variable "cluster_version" {
 variable "cluster_enabled_log_types" {
   default     = []
   description = "A list of the desired control plane logging to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html)"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "map_accounts" {
   description = "Additional AWS account numbers to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
-  type        = "list"
+  type        = list(string)
   default     = []
-}
-
-variable "map_accounts_count" {
-  description = "The count of accounts in the map_accounts list."
-  type        = "string"
-  default     = 0
 }
 
 variable "map_roles" {
+## Does anybody use it? 
   description = "Additional IAM roles to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
-  type        = "list"
+  type        = any
   default     = []
-}
-
-variable "map_roles_count" {
-  description = "The count of roles in the map_roles list."
-  type        = "string"
-  default     = 0
 }
 
 variable "map_users" {
   description = "Additional IAM users to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
-  type        = "list"
+  type        = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
   default     = []
-}
-
-variable "map_users_count" {
-  description = "The count of roles in the map_users list."
-  type        = "string"
-  default     = 0
 }
 
 variable "vpc_id" {
   description = "VPC ID for cluster provisioning"
-  type        = "string"
+  type        = string
 }
 
 variable "private_subnets" {
   description = "List of private subnets for cluster worker nodes provisioning"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "public_subnets" {
   description = "List of public subnets for ALB provisioning"
-  type        = "list"
+  type        = list(string)
 }
 
 #########################WORKER_NODES#########################
 variable "volume_size" {
   description = "Volume size(GB) for worker node in cluster"
-  type        = "string"
+  type        = string
   default     = "50"
 }
 
 variable "worker_nodes_ssh_key" {
   description = "If Public ssh key provided, will be used for ssh access to worker nodes. Otherwise instances will be created without ssh key."
-  type        = "string"
+  type        = string
   default     = ""
 }
 
 variable "spot_configuration" {
   description = "List of maps that contains configurations for ASGs with spot workers instances what will be used in EKS-cluster"
-  type        = "list"
+  type        = list(object({
+    instance_type           = string
+    spot_price              = string
+    asg_max_size            = string
+    asg_min_size            = string
+    asg_desired_capacity    = string
+    additional_kubelet_args = string
+  }))
 
   default = [
     {
@@ -179,7 +176,13 @@ variable "spot_configuration" {
 
 variable "on_demand_configuration" {
   description = "List of maps that contains configurations for ASGs with on-demand workers instances what will be used in EKS-cluster"
-  type        = "list"
+  type        = list(object({
+    instance_type           = string
+    asg_max_size            = string
+    asg_min_size            = string
+    asg_desired_capacity    = string
+    additional_kubelet_args = string
+  }))
 
   default = [
     {
@@ -194,7 +197,13 @@ variable "on_demand_configuration" {
 
 variable "service_on_demand_configuration" {
   description = "List of maps that contains configurations for ASGs with on-demand workers instances what will be used in EKS-cluster"
-  type        = "list"
+  type        = list(object({
+    instance_type           = string
+    asg_max_size            = string
+    asg_min_size            = string
+    asg_desired_capacity    = string
+    additional_kubelet_args = string
+  }))
 
   default = [
     {
@@ -211,36 +220,37 @@ variable "service_on_demand_configuration" {
 
 variable "deploy_ingress_controller" {
   description = "Set true for nginx ingress controller installation (https://github.com/kubernetes/ingress-nginx#nginx-ingress-controller)"
-  type        = "string"
+  type        = string
   default     = "true"
 }
 
 variable "deploy_external_dns" {
   description = "Set true for External DNS installation (https://github.com/kubernetes-incubator/external-dns#externaldns)"
-  type        = "string"
+  type        = string
   default     = "false"
 }
 
 variable "enable_container_logs" {
   description = "Set true to install fluentd and store container logs in AWS CloudWatch log group (https://github.com/helm/charts/tree/master/incubator/fluentd-cloudwatch#fluentd-cloudwatch)"
-  type        = "string"
+  type        = string
   default     = "false"
 }
 
 variable "container_logs_retention_days" {
   description = "Set retention period for AWS CloudWatch log group with container logs"
-  type        = "string"
+  type        = string
   default     = "5"
 }
 
 variable "enable_monitoring" {
   description = "Set true for prometheus-operator (https://github.com/helm/charts/tree/master/stable/prometheus-operator#prometheus-operator) and grafana (https://github.com/helm/charts/tree/master/stable/grafana#grafana-helm-chart) deployment. Also storageClass will be created."
-  type        = "string"
+  type        = string
   default     = "false"
 }
 
 variable "monitoring_availability_zone" {
   description = "Availability zone in which will be deployed grafana and prometheus-operator, as this deployments required persistent volumes for data storing. If variable not set - availability zone of first subnet in private_subnets array will be used."
-  type        = "string"
+  type        = string
   default     = ""
 }
+
