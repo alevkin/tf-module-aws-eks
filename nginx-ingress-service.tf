@@ -405,6 +405,8 @@ resource "kubernetes_config_map" "nginx_configuration" {
     proxy-real-ip-cidr    = "0.0.0.0/0"
     use-forwarded-headers = "true"
     use-proxy-protocol    = "false"
+    client-header-timeout = "65"
+    keepalive-timeout     = "75"
   }
 }
 
