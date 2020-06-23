@@ -277,6 +277,11 @@ datasources:
       url: http://prometheus-operator-prometheus:9090/
       access: proxy
       isDefault: true
+    - name: Loki
+      type: loki
+      url: http://loki.logging:3100/
+      access: proxy
+      isDefault: false
 
 ## Configure notifiers
 ## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels
