@@ -2,8 +2,8 @@ resource "kubernetes_secret" "grafana-ldap-toml" {
   count = var.grafana_ldap_toml == null ? 0 : 1
 
   metadata {
-    name = "grafana-ldap-toml"
-    namespace  = "monitoring"
+    name      = "grafana-ldap-toml"
+    namespace = "monitoring"
   }
 
   data = {
@@ -14,7 +14,7 @@ resource "kubernetes_secret" "grafana-ldap-toml" {
 resource "helm_release" "grafana" {
   depends_on = [kubernetes_persistent_volume_claim.grafana, kubernetes_secret.grafana-ldap-toml]
   name       = "grafana"
-  namespace = "monitoring"
+  namespace  = "monitoring"
   chart      = "${path.module}/manifests/monitoring/grafana-helm/"
 
   values = [
