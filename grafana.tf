@@ -41,6 +41,6 @@ resource "helm_release" "grafana" {
   }
   set {
     name  = "ldap.existingSecret"
-    value = "grafana-ldap-toml"
+    value = var.grafana_ldap_toml == null ? "" : "grafana-ldap-toml"
   }
 }
