@@ -27,7 +27,7 @@ variable "alternative_domains_count" {
 variable "alternative_domains" {
   description = "Alternative domains for ACM certificate dns records with ',' as delimiter"
   default     = []
-  type = list(string)
+  type        = list(string)
 }
 
 variable "alb_route53_record" {
@@ -36,7 +36,7 @@ variable "alb_route53_record" {
 
 variable "alb_ingress_rules" {
   description = "List of maps that contains ingress rules for ALB security group"
-  type        = list(object({
+  type = list(object({
     from_port   = number
     to_port     = number
     protocol    = string
@@ -61,7 +61,7 @@ variable "alb_ingress_rules" {
 variable "cidr_whitelist" {
   description = "List of maps that contains IP CIDR with protocol type. Example provided in module examples"
   default     = []
-  type = list(object({ type = string, value = string }))
+  type        = list(object({ type = string, value = string }))
 }
 
 variable "enable_waf" {
@@ -72,7 +72,7 @@ variable "enable_waf" {
 variable "create_acm_certificate" {
   description = "Set true for ACM certificate for ALB creation"
   default     = "true"
-  type = bool
+  type        = bool
 }
 
 variable "target_group_port" {
@@ -99,7 +99,7 @@ variable "map_accounts" {
 }
 
 variable "map_roles" {
-## Does anybody use it? 
+  ## Does anybody use it? 
   description = "Additional IAM roles to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
   type        = any
   default     = []
@@ -107,12 +107,12 @@ variable "map_roles" {
 
 variable "map_users" {
   description = "Additional IAM users to add to the aws-auth configmap. See examples/eks_test_fixture/variables.tf for example format."
-  type        = list(object({
+  type = list(object({
     userarn  = string
     username = string
     groups   = list(string)
   }))
-  default     = []
+  default = []
 }
 
 variable "vpc_id" {
@@ -145,7 +145,7 @@ variable "worker_nodes_ssh_key" {
 
 variable "spot_configuration" {
   description = "List of maps that contains configurations for ASGs with spot workers instances what will be used in EKS-cluster"
-  type        = list(object({
+  type = list(object({
     instance_type           = string
     spot_price              = string
     asg_max_size            = string
@@ -176,7 +176,7 @@ variable "spot_configuration" {
 
 variable "on_demand_configuration" {
   description = "List of maps that contains configurations for ASGs with on-demand workers instances what will be used in EKS-cluster"
-  type        = list(object({
+  type = list(object({
     instance_type           = string
     asg_max_size            = string
     asg_min_size            = string
@@ -197,7 +197,7 @@ variable "on_demand_configuration" {
 
 variable "service_on_demand_configuration" {
   description = "List of maps that contains configurations for ASGs with on-demand workers instances what will be used in EKS-cluster"
-  type        = list(object({
+  type = list(object({
     instance_type           = string
     asg_max_size            = string
     asg_min_size            = string
@@ -254,3 +254,8 @@ variable "monitoring_availability_zone" {
   default     = ""
 }
 
+variable "grafana_ldap_toml" {
+  type        = string
+  description = "LDAP configuration (ldap.toml) for Grafana. If specified then LDAP authentication will be enabled"
+  default     = null
+}
